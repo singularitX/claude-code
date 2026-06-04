@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="程远 Alex Cheng - 资深前端架构师，10年深耕千万级产品交互边界">
+<title>程远 Alex Cheng — 前端架构师</title>
+<style>
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --color-primary: #0052D9;
+  --color-primary-glow: #2979FF;
+  --color-aurora-teal: #00E5FF;
+  --color-aurora-purple: #7C4DFF;
+  --color-aurora-pink: #FF4081;
+  --color-bg-deep: #0A0E1A;
+  --color-bg-mid: #111827;
+  --color-bg-card: rgba(17, 24, 39, 0.6);
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-text-primary: #F1F5F9;
+  --color-text-secondary: #94A3B8;
+  --color-text-muted: #64748B;
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --transition-fast: 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-smooth: 400ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-stack);
+  background: var(--color-bg-deep);
+  color: var(--color-text-primary);
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--color-bg-deep); }
+::-webkit-scrollbar-thumb { background: var(--color-text-muted); border-radius: 3px; }
+
+/* ============================================================
+   AURORA BACKGROUND
+   ============================================================ */
+.aurora-bg {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+}
+.aurora-bg::before, .aurora-bg::after {
+  content: ''; position: absolute;
+  border-radius: 50%;
+  filter: blur(140px);
+  opacity: 0.25;
+  animation: aurora-drift 20s ease-in-out infinite alternate;
+}
+.aurora-bg::before {
+  width: 800px; height: 800px;
+  background: var(--color-primary);
+  top: -20%; left: -10%;
+  animation-delay: 0s;
+}
+.aurora-bg::after {
+  width: 600px; height: 600px;
+  background: var(--color-aurora-purple);
+  bottom: -15%; right: -5%;
+  animation-delay: -10s;
+  animation-duration: 25s;
+}
+
+@keyframes aurora-drift {
+  0% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(60px, -40px) scale(1.15); }
+  66% { transform: translate(-30px, 30px) scale(0.95); }
+  100% { transform: translate(40px, -20px) scale(1.05); }
+}
+
+.aurora-ribbon {
+  position: fixed; top: 0; left: 0; width: 100%; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--color-aurora-teal), var(--color-primary), var(--color-aurora-purple), transparent);
+  z-index: 10; opacity: 0.6;
+  animation: ribbon-slide 8s linear infinite;
+}
+@keyframes ribbon-slide { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+.page-wrap { position: relative; z-index: 1; }
+.container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+section { padding: 100px 0; position: relative; }
+
+.section-label {
+  display: inline-block;
+  font-size: 13px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--color-primary-glow);
+  margin-bottom: 16px;
+  border: 1px solid rgba(0, 82, 217, 0.3);
+  padding: 6px 16px; border-radius: 50px;
+  background: rgba(0, 82, 217, 0.08);
+}
+.section-title {
+  font-size: clamp(28px, 5vw, 48px); font-weight: 800; letter-spacing: -1px;
+  line-height: 1.15; margin-bottom: 16px; color: var(--color-text-primary);
+}
+
+/* ============================================================
+   HERO CARD
+   ============================================================ */
+.hero-section {
+  min-height: 100vh; display: flex; align-items: center; padding-top: 0;
+}
+.hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+
+.hero-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+.hero-avatar {
+  width: 48px; height: 48px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-aurora-purple));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; font-weight: 700; color: white; flex-shrink: 0;
+}
+.hero-name { font-size: 18px; font-weight: 600; }
+.hero-name small { display: block; font-size: 13px; font-weight: 400; color: var(--color-text-secondary); }
+
+.hero-slogan {
+  font-size: clamp(36px, 7vw, 64px); font-weight: 900; line-height: 1.1;
+  letter-spacing: -2px; margin-bottom: 24px;
+  background: linear-gradient(135deg, var(--color-text-primary) 20%, var(--color-primary-glow) 50%, var(--color-aurora-teal) 80%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+
+.hero-tags { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 32px; }
+.hero-tag {
+  padding: 8px 18px; border-radius: 50px; font-size: 14px; font-weight: 600;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-card); backdrop-filter: blur(20px);
+  color: var(--color-text-secondary); transition: var(--transition-fast);
+}
+.hero-tag:hover { border-color: var(--color-primary-glow); color: var(--color-text-primary); }
+
+.hero-cta { display: flex; gap: 16px; flex-wrap: wrap; }
+.btn-primary, .btn-secondary {
+  padding: 14px 32px; border-radius: 50px; font-size: 15px; font-weight: 600;
+  cursor: pointer; transition: var(--transition-fast); text-decoration: none; display: inline-block;
+  border: none; font-family: var(--font-stack);
+}
+.btn-primary {
+  background: var(--color-primary); color: white;
+  box-shadow: 0 8px 32px rgba(0, 82, 217, 0.3);
+}
+.btn-primary:hover { background: var(--color-primary-glow); transform: translateY(-2px); box-shadow: 0 12px 40px rgba(0, 82, 217, 0.45); }
+.btn-secondary {
+  background: transparent; color: var(--color-text-primary);
+  border: 1px solid var(--color-border); backdrop-filter: blur(20px);
+}
+.btn-secondary:hover { border-color: var(--color-text-secondary); background: rgba(255,255,255,0.05); }
+
+.hero-visual {
+  position: relative; display: flex; align-items: center; justify-content: center;
+}
+.hero-shape {
+  width: 320px; height: 320px; border-radius: 40px;
+  background: linear-gradient(135deg, rgba(0,82,217,0.15), rgba(124,77,255,0.15), rgba(0,229,255,0.1));
+  border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(40px);
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+}
+.hero-shape::before {
+  content: ''; position: absolute; width: 200px; height: 200px;
+  background: radial-gradient(circle, var(--color-primary) 0%, transparent 70%);
+  top: -10%; right: -10%; opacity: 0.4; animation: hero-glow 6s ease-in-out infinite alternate;
+}
+.hero-shape::after {
+  content: ''; position: absolute; width: 150px; height: 150px;
+  background: radial-gradient(circle, var(--color-aurora-purple) 0%, transparent 70%);
+  bottom: -5%; left: -5%; opacity: 0.3; animation: hero-glow 8s ease-in-out infinite alternate-reverse;
+}
+@keyframes hero-glow { 0% { transform: translate(0, 0); } 100% { transform: translate(30px, -20px); } }
+
+.hero-code-block {
+  width: 200px; height: 200px; display: flex; align-items: center; justify-content: center;
+  position: relative; z-index: 1;
+}
+.hero-code-block svg { width: 140px; height: 140px; }
+
+/* ============================================================
+   STATS BOARD
+   ============================================================ */
+.stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.stats-card {
+  background: var(--color-bg-card); backdrop-filter: blur(20px);
+  border: 1px solid var(--color-border); border-radius: var(--radius-lg);
+  padding: 28px 24px; text-align: center; transition: var(--transition-smooth);
+  position: relative; overflow: hidden;
+}
+.stats-card::after {
+  content: ''; position: absolute; inset: 0; border-radius: var(--radius-lg);
+  background: radial-gradient(ellipse at 50% 0%, rgba(0,82,217,0.08), transparent 70%);
+  opacity: 0; transition: opacity var(--transition-smooth);
+}
+.stats-card:hover { border-color: rgba(255,255,255,0.15); transform: translateY(-4px); }
+.stats-card:hover::after { opacity: 1; }
+
+.stats-icon { width: 44px; height: 44px; margin: 0 auto 16px; }
+.stats-icon svg { width: 100%; height: 100%; }
+.stats-value {
+  font-size: clamp(28px, 5vw, 40px); font-weight: 900; letter-spacing: -1px;
+  background: linear-gradient(135deg, var(--color-text-primary), var(--color-primary-glow));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  line-height: 1.1; margin-bottom: 4px;
+}
+.stats-unit { font-size: 16px; font-weight: 600; color: var(--color-primary-glow); }
+.stats-label { font-size: 13px; color: var(--color-text-muted); margin-top: 6px; font-weight: 500; }
+
+/* ============================================================
+   TIMELINE PRO
+   ============================================================ */
+.timeline-wrap { position: relative; padding-left: 40px; }
+.timeline-line {
+  position: absolute; left: 18px; top: 0; bottom: 0; width: 2px;
+  background: linear-gradient(to bottom, var(--color-primary), var(--color-aurora-purple), transparent);
+}
+.timeline-item { position: relative; margin-bottom: 48px; }
+.timeline-item:last-child { margin-bottom: 0; }
+.timeline-dot {
+  position: absolute; left: -34px; top: 8px; width: 14px; height: 14px; border-radius: 50%;
+  background: var(--color-primary); border: 3px solid var(--color-bg-deep);
+  box-shadow: 0 0 20px rgba(0, 82, 217, 0.5); z-index: 2;
+  transition: var(--transition-fast);
+}
+.timeline-item:hover .timeline-dot { box-shadow: 0 0 30px rgba(0, 130, 255, 0.8); transform: scale(1.3); }
+
+.timeline-card {
+  background: var(--color-bg-card); backdrop-filter: blur(20px);
+  border: 1px solid var(--color-border); border-radius: var(--radius-lg);
+  padding: 28px; transition: var(--transition-smooth);
+}
+.timeline-card:hover { border-color: rgba(255,255,255,0.15); }
+.timeline-header { display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.timeline-date { font-size: 14px; font-weight: 600; color: var(--color-primary-glow); letter-spacing: 1px; }
+.timeline-company { font-size: 20px; font-weight: 700; }
+.timeline-role { font-size: 14px; color: var(--color-text-secondary); font-weight: 500; margin-bottom: 16px; }
+.timeline-bullets { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.timeline-bullets li {
+  padding-left: 20px; position: relative; font-size: 14px; color: var(--color-text-secondary);
+  line-height: 1.7;
+}
+.timeline-bullets li::before {
+  content: ''; position: absolute; left: 0; top: 10px; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--color-primary-glow); opacity: 0.6;
+}
+
+/* ============================================================
+   SKILL RADAR
+   ============================================================ */
+.skill-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.skill-category {
+  background: var(--color-bg-card); backdrop-filter: blur(20px);
+  border: 1px solid var(--color-border); border-radius: var(--radius-lg);
+  padding: 24px;
+}
+.skill-category h3 {
+  font-size: 15px; font-weight: 700; margin-bottom: 20px; color: var(--color-text-primary);
+}
+.skill-item { margin-bottom: 14px; }
+.skill-item:last-child { margin-bottom: 0; }
+.skill-head { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 13px; }
+.skill-name { color: var(--color-text-secondary); }
+.skill-score { font-weight: 700; color: var(--color-primary-glow); }
+.skill-bar {
+  width: 100%; height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden;
+}
+.skill-fill {
+  height: 100%; border-radius: 3px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-primary-glow), var(--color-aurora-teal));
+  transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  width: 0;
+}
+.skill-fill.visible { width: var(--fill); }
+
+/* ============================================================
+   BENTO GALLERY
+   ============================================================ */
+.bento-grid {
+  display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto auto;
+  gap: 16px;
+}
+.bento-project {
+  background: var(--color-bg-card); backdrop-filter: blur(20px);
+  border: 1px solid var(--color-border); border-radius: var(--radius-lg);
+  padding: 28px; transition: var(--transition-smooth); position: relative; overflow: hidden;
+  cursor: default;
+}
+.bento-project:nth-child(1) { grid-row: span 2; }
+.bento-project:hover { border-color: rgba(255,255,255,0.15); transform: translateY(-2px); }
+
+.bento-img-placeholder {
+  width: 100%; height: 160px; border-radius: var(--radius-md);
+  background: linear-gradient(135deg, rgba(0,82,217,0.2), rgba(124,77,255,0.2), rgba(0,229,255,0.1));
+  margin-bottom: 20px; display: flex; align-items: center; justify-content: center;
+  font-size: 12px; color: var(--color-text-muted); letter-spacing: 1px; position: relative;
+  overflow: hidden;
+}
+.bento-project:nth-child(1) .bento-img-placeholder { height: 300px; }
+.bento-img-placeholder::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(to top, var(--color-bg-card), transparent 60%);
+}
+.bento-img-label {
+  position: relative; z-index: 2; background: rgba(0,0,0,0.4); padding: 6px 14px;
+  border-radius: 50px; font-size: 11px; letter-spacing: 1px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.bento-title { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+.bento-role { font-size: 13px; color: var(--color-primary-glow); font-weight: 600; margin-bottom: 10px; }
+.bento-impact {
+  font-size: 14px; color: var(--color-text-secondary); line-height: 1.7; margin-bottom: 14px;
+  position: relative; padding-left: 16px; border-left: 2px solid var(--color-primary);
+}
+.bento-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+.bento-tag {
+  padding: 4px 12px; border-radius: 50px; font-size: 11px; font-weight: 600;
+  background: rgba(0,82,217,0.12); color: var(--color-primary-glow);
+  border: 1px solid rgba(0,82,217,0.2);
+}
+
+/* ============================================================
+   TESTIMONIAL
+   ============================================================ */
+.testimonial-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.testimonial-card {
+  background: var(--color-bg-card); backdrop-filter: blur(20px);
+  border: 1px solid var(--color-border); border-radius: var(--radius-lg);
+  padding: 28px; transition: var(--transition-smooth); position: relative;
+}
+.testimonial-card:hover { border-color: rgba(255,255,255,0.12); }
+.testimonial-quote {
+  font-size: 14px; line-height: 1.8; color: var(--color-text-secondary);
+  margin-bottom: 20px; position: relative; font-style: italic;
+}
+.testimonial-quote::before {
+  content: '\201C'; font-size: 48px; line-height: 1; color: var(--color-primary);
+  display: block; margin-bottom: 8px; font-style: normal; font-weight: 900;
+  opacity: 0.4;
+}
+.testimonial-author { display: flex; align-items: center; gap: 12px; }
+.testimonial-avatar {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-aurora-purple));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; font-weight: 700; color: white;
+  flex-shrink: 0;
+}
+.testimonial-name { font-size: 14px; font-weight: 700; }
+.testimonial-relation { font-size: 12px; color: var(--color-text-muted); }
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.footer {
+  text-align: center; padding: 60px 24px; border-top: 1px solid var(--color-border);
+  color: var(--color-text-muted); font-size: 13px;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 768px) {
+  .hero-grid { grid-template-columns: 1fr; gap: 40px; }
+  .hero-visual { order: -1; }
+  .hero-shape { width: 200px; height: 200px; border-radius: 30px; }
+  .hero-slogan { font-size: 32px; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .skill-grid { grid-template-columns: 1fr; }
+  .bento-grid { grid-template-columns: 1fr; }
+  .bento-project:nth-child(1) { grid-row: span 1; }
+  .bento-project:nth-child(1) .bento-img-placeholder { height: 160px; }
+  .testimonial-grid { grid-template-columns: 1fr; }
+  .timeline-wrap { padding-left: 32px; }
+  .timeline-dot { left: -26px; }
+  .timeline-line { left: 12px; }
+  section { padding: 60px 0; }
+}
+
+@media (max-width: 480px) {
+  .stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .stats-card { padding: 20px 16px; }
+  .hero-cta { flex-direction: column; }
+}
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important; animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  html { scroll-behavior: auto; }
+  .aurora-bg::before, .aurora-bg::after { animation: none; opacity: 0.15; }
+  .aurora-ribbon { display: none; }
+}
+
+/* ============================================================
+   SCROLL ANIMATIONS
+   ============================================================ */
+.reveal {
+  opacity: 0; transform: translateY(40px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+.reveal-delay-5 { transition-delay: 0.5s; }
+</style>
+</head>
+<body>
+
+<!-- Aurora Background -->
+<div class="aurora-bg" aria-hidden="true"></div>
+<div class="aurora-ribbon" aria-hidden="true"></div>
+
+<!-- ============================================================
+     PAGE WRAP
+     ============================================================ -->
+<div class="page-wrap">
+
+<!-- ============================================================
+     HERO CARD
+     ============================================================ -->
+<section class="hero-section">
+  <div class="container">
+    <div class="hero-grid">
+      <div class="hero-content reveal">
+        <div class="hero-meta">
+          <div class="hero-avatar">程</div>
+          <div class="hero-name">
+            程远 <small>Alex Cheng · 中国深圳</small>
+          </div>
+        </div>
+        <h1 class="hero-slogan">用架构重塑千万级产品的交互边界</h1>
+        <div class="hero-tags">
+          <span class="hero-tag">前端架构</span>
+          <span class="hero-tag">全栈工程</span>
+          <span class="hero-tag">WebGL/3D</span>
+          <span class="hero-tag">技术管理</span>
+        </div>
+        <div class="hero-cta">
+          <a href="#bento" class="btn-primary">查看作品集</a>
+          <a href="#footer" class="btn-secondary">下载简历</a>
+        </div>
+      </div>
+      <div class="hero-visual reveal reveal-delay-2">
+        <div class="hero-shape">
+          <div class="hero-code-block">
+            <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="40" y="30" width="120" height="140" rx="12" stroke="#2979FF" stroke-width="2" fill="rgba(0,82,217,0.08)"/>
+              <rect x="52" y="46" width="60" height="6" rx="3" fill="#0052D9" opacity="0.6"/>
+              <rect x="52" y="58" width="90" height="6" rx="3" fill="#2979FF" opacity="0.4"/>
+              <rect x="52" y="70" width="70" height="6" rx="3" fill="#00E5FF" opacity="0.4"/>
+              <rect x="52" y="82" width="50" height="6" rx="3" fill="#0052D9" opacity="0.3"/>
+              <rect x="52" y="94" width="80" height="6" rx="3" fill="#2979FF" opacity="0.3"/>
+              <rect x="52" y="106" width="40" height="6" rx="3" fill="#00E5FF" opacity="0.3"/>
+              <rect x="52" y="118" width="65" height="6" rx="3" fill="#0052D9" opacity="0.2"/>
+              <circle cx="160" cy="50" r="16" fill="none" stroke="#7C4DFF" stroke-width="2" opacity="0.5"/>
+              <circle cx="160" cy="50" r="6" fill="#7C4DFF" opacity="0.5"/>
+              <path d="M160 62 L160 82" stroke="#7C4DFF" stroke-width="1.5" opacity="0.4"/>
+              <path d="M150 72 L170 72" stroke="#7C4DFF" stroke-width="1.5" opacity="0.4"/>
+              <path d="M155 100 L165 100" stroke="#00E5FF" stroke-width="1" opacity="0.3"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     STATS BOARD
+     ============================================================ -->
+<section id="stats">
+  <div class="container">
+    <div class="section-label reveal">数据见证</div>
+    <h2 class="section-title reveal reveal-delay-1">10 年深耕，数字说话</h2>
+    <div class="stats-grid reveal reveal-delay-2">
+      <div class="stats-card">
+        <div class="stats-icon">
+          <svg viewBox="0 0 44 44" fill="none"><rect x="6" y="8" width="32" height="28" rx="4" stroke="#2979FF" stroke-width="1.5"/><rect x="10" y="14" width="24" height="2" rx="1" fill="#2979FF" opacity="0.4"/><rect x="10" y="20" width="18" height="2" rx="1" fill="#2979FF" opacity="0.3"/><rect x="10" y="26" width="20" height="2" rx="1" fill="#2979FF" opacity="0.3"/><rect x="12" y="18" width="8" height="8" rx="2" fill="none" stroke="#00E5FF" stroke-width="1.5"/></svg>
+        </div>
+        <div class="stats-value">10+</div>
+        <div class="stats-unit">年</div>
+        <div class="stats-label">行业经验</div>
+      </div>
+      <div class="stats-card">
+        <div class="stats-icon">
+          <svg viewBox="0 0 44 44" fill="none"><circle cx="16" cy="14" r="5" stroke="#2979FF" stroke-width="1.5"/><path d="M8 34c0-4.4 3.6-8 8-8s8 3.6 8 8" stroke="#2979FF" stroke-width="1.5"/><circle cx="30" cy="14" r="4" stroke="#2979FF" stroke-width="1.5"/><path d="M24 32c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="#2979FF" stroke-width="1.5"/></svg>
+        </div>
+        <div class="stats-value">3000万+</div>
+        <div class="stats-unit">DAU</div>
+        <div class="stats-label">服务用户</div>
+      </div>
+      <div class="stats-card">
+        <div class="stats-icon">
+          <svg viewBox="0 0 44 44" fill="none"><path d="M8 12 L22 6 L36 12 L22 18 Z" stroke="#2979FF" stroke-width="1.5"/><path d="M8 20 L22 14 L36 20 L22 26 Z" stroke="#2979FF" stroke-width="1.5"/><path d="M8 28 L22 22 L36 28 L22 34 Z" stroke="#2979FF" stroke-width="1.5"/></svg>
+        </div>
+        <div class="stats-value">47</div>
+        <div class="stats-unit">个</div>
+        <div class="stats-label">交付项目</div>
+      </div>
+      <div class="stats-card">
+        <div class="stats-icon">
+          <svg viewBox="0 0 44 44" fill="none"><polyline points="8,34 18,22 26,26 36,10" stroke="#2979FF" stroke-width="1.5" fill="none"/><circle cx="18" cy="22" r="2" fill="#2979FF"/><circle cx="26" cy="26" r="2" fill="#2979FF"/><circle cx="36" cy="10" r="2" fill="#00E5FF"/></svg>
+        </div>
+        <div class="stats-value">99.97</div>
+        <div class="stats-unit">%</div>
+        <div class="stats-label">系统可用</div>
+      </div>
+      <div class="stats-card">
+        <div class="stats-icon">
+          <svg viewBox="0 0 44 44" fill="none"><polygon points="22,6 26,17 38,17 28,24 32,35 22,28 12,35 16,24 6,17 18,17" stroke="#2979FF" stroke-width="1.5"/></svg>
+        </div>
+        <div class="stats-value">3&times;</div>
+        <div class="stats-unit">Awwwards</div>
+        <div class="stats-label">设计奖项</div>
+      </div>
+      <div class="stats-card">
+        <div class="stats-icon">
+          <svg viewBox="0 0 44 44" fill="none"><circle cx="22" cy="22" r="16" stroke="#2979FF" stroke-width="1.5"/><polyline points="22,10 22,22 30,26" stroke="#2979FF" stroke-width="1.5"/><circle cx="22" cy="22" r="3" fill="#00E5FF"/></svg>
+        </div>
+        <div class="stats-value">6</div>
+        <div class="stats-unit">周</div>
+        <div class="stats-label">最快交付</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     TIMELINE PRO
+     ============================================================ -->
+<section id="timeline">
+  <div class="container">
+    <div class="section-label reveal">职业轨迹</div>
+    <h2 class="section-title reveal reveal-delay-1">从代码到架构，逐级而上</h2>
+    <div class="timeline-wrap reveal reveal-delay-2">
+      <div class="timeline-line"></div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-card">
+          <div class="timeline-header">
+            <span class="timeline-date">2023.06 — 至今</span>
+            <span class="timeline-company">星瀚科技</span>
+          </div>
+          <div class="timeline-role">前端架构总监</div>
+          <ul class="timeline-bullets">
+            <li>主导电商中台微前端架构重构，首屏加载从 4.2s 降至 0.8s</li>
+            <li>搭建内部 CLI 工具链，团队研发效率提升 60%</li>
+            <li>引入 WebGL 商品 3D 预览，转化率提升 23%</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-card">
+          <div class="timeline-header">
+            <span class="timeline-date">2020.03 — 2023.05</span>
+            <span class="timeline-company">云迹互动</span>
+          </div>
+          <div class="timeline-role">高级前端工程师 → 技术 Leader</div>
+          <ul class="timeline-bullets">
+            <li>负责千万级高并发直播互动平台架构设计</li>
+            <li>自研 Canvas 渲染引擎支撑 10 万人同屏实时互动</li>
+            <li>带领 8 人前端小组完成从 0 到 1 的产品交付</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-card">
+          <div class="timeline-header">
+            <span class="timeline-date">2017.09 — 2020.02</span>
+            <span class="timeline-company">迅影网络</span>
+          </div>
+          <div class="timeline-role">前端工程师</div>
+          <ul class="timeline-bullets">
+            <li>参与协同文档编辑器核心模块开发，覆盖 100 万+ 企业用户</li>
+            <li>设计离线优先架构，弱网环境下可用性达 99.5%</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-card">
+          <div class="timeline-header">
+            <span class="timeline-date">2015.07 — 2017.08</span>
+            <span class="timeline-company">极光互娱</span>
+          </div>
+          <div class="timeline-role">初级前端工程师</div>
+          <ul class="timeline-bullets">
+            <li>独立开发 3 款 H5 游戏，累计 PV 超 500 万</li>
+            <li>自学 Three.js 完成公司首个 3D 品牌营销页面</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SKILL RADAR
+     ============================================================ -->
+<section id="skills">
+  <div class="container">
+    <div class="section-label reveal">能力图谱</div>
+    <h2 class="section-title reveal reveal-delay-1">T 型能力，纵深覆盖</h2>
+    <div class="skill-grid reveal reveal-delay-2" id="skill-grid">
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     BENTO GALLERY
+     ============================================================ -->
+<section id="bento">
+  <div class="container">
+    <div class="section-label reveal">核心作品</div>
+    <h2 class="section-title reveal reveal-delay-1">每一个项目，都是里程碑</h2>
+    <div class="bento-grid reveal reveal-delay-2">
+
+      <div class="bento-project">
+        <div class="bento-img-placeholder">
+          <span class="bento-img-label">AI 生成封面</span>
+        </div>
+        <div class="bento-title">星河电商中台</div>
+        <div class="bento-role">前端架构总监</div>
+        <p class="bento-impact">微前端架构支撑 300+ 子应用并行迭代，年节省 2 万工时</p>
+        <div class="bento-tags">
+          <span class="bento-tag">微前端</span>
+          <span class="bento-tag">monorepo</span>
+          <span class="bento-tag">React</span>
+        </div>
+      </div>
+
+      <div class="bento-project">
+        <div class="bento-img-placeholder">
+          <span class="bento-img-label">AI 生成封面</span>
+        </div>
+        <div class="bento-title">LIVE-X 万人直播平台</div>
+        <div class="bento-role">技术负责人</div>
+        <p class="bento-impact">自研 Canvas 引擎承载 10 万并发用户实时弹幕与礼物特效</p>
+        <div class="bento-tags">
+          <span class="bento-tag">Canvas</span>
+          <span class="bento-tag">WebSocket</span>
+          <span class="bento-tag">高并发</span>
+        </div>
+      </div>
+
+      <div class="bento-project">
+        <div class="bento-img-placeholder">
+          <span class="bento-img-label">AI 生成封面</span>
+        </div>
+        <div class="bento-title">翎雀设计系统</div>
+        <div class="bento-role">发起人 & 核心开发者</div>
+        <p class="bento-impact">统一 4 条产品线设计语言，组件复用率从 12% 提升至 78%</p>
+        <div class="bento-tags">
+          <span class="bento-tag">Design System</span>
+          <span class="bento-tag">组件库</span>
+          <span class="bento-tag">Storybook</span>
+        </div>
+      </div>
+
+      <div class="bento-project">
+        <div class="bento-img-placeholder">
+          <span class="bento-img-label">AI 生成封面</span>
+        </div>
+        <div class="bento-title">风行者 CDN 加速方案</div>
+        <div class="bento-role">架构设计</div>
+        <p class="bento-impact">全球边缘节点部署策略使亚太区页面加载提速 3 倍</p>
+        <div class="bento-tags">
+          <span class="bento-tag">CDN</span>
+          <span class="bento-tag">边缘计算</span>
+          <span class="bento-tag">性能</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     TESTIMONIAL
+     ============================================================ -->
+<section id="testimonial">
+  <div class="container">
+    <div class="section-label reveal">他人评价</div>
+    <h2 class="section-title reveal reveal-delay-1">来自同行与 Leader 的真实声音</h2>
+    <div class="testimonial-grid reveal reveal-delay-2">
+
+      <div class="testimonial-card">
+        <div class="testimonial-quote">程远是我见过少数能把「技术深度」和「商业结果」打通的人。他主导的中台重构不只是代码层面的胜利——是真金白银的 ROI。</div>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">张</div>
+          <div>
+            <div class="testimonial-name">张明辉</div>
+            <div class="testimonial-relation">星瀚科技 CTO · 直属上级</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial-card">
+        <div class="testimonial-quote">跟他合作过 3 个从 0 到 1 的项目，每次交付前我都睡得特别踏实。他对用户体验的偏执已经到了「像素级」的程度。</div>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">林</div>
+          <div>
+            <div class="testimonial-name">林雨桐</div>
+            <div class="testimonial-relation">云迹互动 CPO · 产品合作方</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial-card">
+        <div class="testimonial-quote">当年招他进团队是我做过最正确的决定。两年后他反过来教了我很多——这种人就是团队的「技术杠杆」。</div>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">王</div>
+          <div>
+            <div class="testimonial-name">王浩然</div>
+            <div class="testimonial-relation">迅影网络 前端负责人 · 前同事</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     FOOTER
+     ============================================================ -->
+<footer class="footer" id="footer">
+  <div class="container">
+    <p>程远 Alex Cheng · 资深前端架构师</p>
+    <p>alex.cheng@example.com · 中国深圳</p>
+    <p style="margin-top:8px;color:var(--color-text-muted)">简历 Landing Page · 2026</p>
+  </div>
+</footer>
+
+</div><!-- /page-wrap -->
+
+<script>
+// ============================================================
+// SKILL DATA
+// ============================================================
+var skillData = [
+  {
+    category: '前端核心',
+    skills: [
+      { name: 'JavaScript/TS', score: 95 },
+      { name: 'CSS/动画', score: 90 },
+      { name: 'HTML/Semantic', score: 88 }
+    ]
+  },
+  {
+    category: '框架生态',
+    skills: [
+      { name: 'React/Next.js', score: 95 },
+      { name: 'Vue/Nuxt', score: 85 },
+      { name: 'Node.js 全栈', score: 82 }
+    ]
+  },
+  {
+    category: '工程化',
+    skills: [
+      { name: '微前端架构', score: 92 },
+      { name: 'CI/CD/DevOps', score: 85 },
+      { name: 'Monorepo 治理', score: 88 }
+    ]
+  },
+  {
+    category: '性能优化',
+    skills: [
+      { name: 'Web Vitals', score: 93 },
+      { name: '渲染引擎', score: 88 },
+      { name: 'Bundle 优化', score: 90 }
+    ]
+  },
+  {
+    category: '设计&体验',
+    skills: [
+      { name: 'WebGL/3D', score: 82 },
+      { name: '动效设计', score: 87 },
+      { name: 'Figma 协作', score: 80 }
+    ]
+  },
+  {
+    category: '领导力',
+    skills: [
+      { name: '团队管理', score: 85 },
+      { name: '技术布道', score: 78 },
+      { name: '跨部门协作', score: 83 }
+    ]
+  }
+];
+
+// ============================================================
+// RENDER SKILL GRID
+// ============================================================
+(function renderSkills() {
+  var grid = document.getElementById('skill-grid');
+  var html = '';
+  skillData.forEach(function(cat) {
+    html += '<div class="skill-category"><h3>' + cat.category + '</h3>';
+    cat.skills.forEach(function(s) {
+      html += '<div class="skill-item">';
+      html += '<div class="skill-head"><span class="skill-name">' + s.name + '</span><span class="skill-score">' + s.score + '</span></div>';
+      html += '<div class="skill-bar"><div class="skill-fill" style="--fill:' + s.score + '%" data-fill="' + s.score + '"></div></div>';
+      html += '</div>';
+    });
+    html += '</div>';
+  });
+  grid.innerHTML = html;
+})();
+
+// ============================================================
+// SCROLL REVEAL
+// ============================================================
+(function scrollReveal() {
+  var reveals = document.querySelectorAll('.reveal');
+  var skillFills = document.querySelectorAll('.skill-fill');
+
+  function isInView(el) {
+    var rect = el.getBoundingClientRect();
+    return rect.top < window.innerHeight * 0.85 && rect.bottom > 0;
+  }
+
+  function handleScroll() {
+    reveals.forEach(function(el) {
+      if (isInView(el)) { el.classList.add('visible'); }
+    });
+    skillFills.forEach(function(el) {
+      if (isInView(el)) { el.classList.add('visible'); }
+    });
+  }
+
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  handleScroll(); // initial check
+})();
+
+// ============================================================
+// SMOOTH SCROLL FOR CTA
+// ============================================================
+(function smoothCta() {
+  document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
+    anchor.addEventListener('click', function(e) {
+      e.preventDefault();
+      var target = document.querySelector(this.getAttribute('href'));
+      if (target) { target.scrollIntoView({ behavior: 'smooth' }); }
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
